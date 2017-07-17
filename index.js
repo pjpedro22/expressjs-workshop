@@ -12,7 +12,28 @@ app.get('/Hello', function (req, res) {
   else {
     res.send('<h1>Hello World!</h1>');
   }
+});
+
+app.get('/calculator/:operation/:value1/:value2', function (req, res, next) {
   
+  console.log(req.params.operation);
+  var var1 = parseInt(req.params.value1);
+  var var2 = parseInt(req.params.value2);
+
+  switch(req.params.operation) {
+    case 'add':
+      var answer = var1 + var2;
+      res.render('index', { title: 'The answer is ' + answer });
+      break;
+    
+    case 'times':
+      var answer = var1 * var2;
+      res.render('index', { title: 'The answer is ' + answer });
+      break;
+    
+    default:
+      res.status("http-status-code-400");
+  }
 });
 
 
