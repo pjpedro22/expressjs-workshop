@@ -5,6 +5,15 @@ app.get('/', function (req, res) {
   res.send('Hello World!');
 });
 
+app.get('/Hello', function (req, res) {
+  if(app.get('/hello?name=John')) {
+    res.send('<h1>Hello John</h1>');
+  }
+  else {
+    res.send('<h1>Hello World!</h1>');
+  }
+  
+});
 
 
 
