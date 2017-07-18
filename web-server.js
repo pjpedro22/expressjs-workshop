@@ -1,5 +1,24 @@
+'use strict';
+
 var express = require('express');
 var app = express();
+
+//exercise 4
+var RedditAPI = require("../reddit-nodejs-api/reddit.js");
+var request = require('request-promise');
+var mysql = require('promise-mysql');
+
+  var connection = mysql.createPool({
+    host     : 'localhost',
+    user     : 'pjpedro22',
+    password : '',
+    database : 'reddit',
+    connectionLimit: 10
+  });
+  
+    //Use myReddit to insert new data.
+  var myReddit = new RedditAPI(connection);
+
 
 app.get('/', function (req, res) {
   res.send('Hello World!');
@@ -50,9 +69,7 @@ app.get('/calculator/:operation', function (req, res) {
           res.status(400).send(`Bad request`);
         }
     
-    
 
-  
   var operationObject = {
       "operation": operation,
       "firstOperand": num1,
@@ -62,6 +79,39 @@ app.get('/calculator/:operation', function (req, res) {
     
     res.end(JSON.stringify(operationObject, null, 2));
 });
+
+app.get('/posts', function(req, res) {
+
+  var myHTMLString = `
+  <div id="posts">
+    <h1>List of posts</h1>
+      <ul class="posts-list">`;
+  
+  myReddit.getAllPosts()
+  .then(dbPost => {
+    dbPost.forEach(post => {
+      //looking for post value.
+      console.log(post, 'This is my post value');
+      myHTMLString += `
+      <li class="post-item">
+          <h2 class="post-item__title">
+            <a href=`+ post.url + `>`+ post.title + `</a>
+          </h2>
+          <p>Created by ` + post.users.username + `</p>
+        </li>`;
+    });
+  })
+  .then(result => {
+    myHTMLString += `
+    </ul>
+  </div>`;
+  res.end(myHTMLString);
+  });
+});
+
+
+
+
 
 
 /* YOU DON'T HAVE TO CHANGE ANYTHING BELOW THIS LINE :) */
